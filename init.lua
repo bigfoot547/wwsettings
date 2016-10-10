@@ -35,7 +35,7 @@ minetest.register_chatcommand("wwget", {
 	params = "<setting>",
 	privs = {server = true},
 	func = function(name, param)
-		minetest.chat_send_player(name, setting_get(param))
+		minetest.chat_send_player(name, param.." = "..setting_get(param))
 	end
 })
 
