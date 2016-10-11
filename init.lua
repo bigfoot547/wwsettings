@@ -2,6 +2,7 @@ function setting_get(set)
 	local file
 	local errstr
 	local filestr
+	local retval
 	
 	-- Create the file if non-existant
 	file, errstr = io.open(minetest.get_worldpath().."/wwsettings.conf", "a")
@@ -23,21 +24,13 @@ function setting_get(set)
 	for i in pairs(savetable) do
 		if savetable[i]:find(set) then
 			io.close(file)
-			return savetable[i]:split(' ')[3]
+			_, retval = string.match(savetable[i], "([^ ]+) = (.+)")
+			return retval
 		end
 	end
 	io.close(file)
 	return "<not set>"
 end
-
-minetest.register_chatcommand("wwget", {
-	description = "Get a world-wide setting",
-	params = "<setting>",
-	privs = {server = true},
-	func = function(name, param)
-		minetest.chat_send_player(name, param.." = "..setting_get(param))
-	end
-})
 
 function setting_set(set, val)
 	local file
@@ -71,18 +64,23 @@ function setting_set(set, val)
 		file:write(table.concat(savetable, "\n"))
 		io.close(file)
 	end
+	return true
 end
 
 minetest.register_chatcommand("wwset", {
-	description = "Set a world-wide setting",
-	params = "<setting> <value>",
+	description = "Set/Get a world-wide setting",
+	params = "<setting> [value]",
 	privs = {server = true},
 	func = function(name, param)
-		if param:split(' ')[1] and param:split(' ')[2] then
-			setting_set(param:split(' ')[1], param:split(' ')[2])
-			minetest.chat_send_player(name, param:split(' ')[1].." = "..setting_get(param:split(' ')[1]))
-		else
-			minetest.chat_send_player(name, minetest.colorize("#FF0000", "Invalid Usage."))
+		local setting, value = string.match(param, "([^ ]+) (.+)")
+		if value and setting then
+			setting_set(setting, value)
+			return true, setting .. " = " .. setting_get(setting)
 		end
+		if param then
+			return true, param .. " = " .. setting_get(param)
+		end
+		minetest.chat_send_player(name, minetest.colorize("#FF0000", "Invalid Usage."))
+		return false
 	end
 })
