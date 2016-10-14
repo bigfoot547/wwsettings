@@ -21,4 +21,4 @@ This mod has been created and is now version **0.1**! YAY!
 **0.1**: Just some minor stuff... such as its ***creation***!
 
 # License
-The code is licensed under the **LGPL v3.0**
+The code is licensed under the **LGPL v2.1+**
