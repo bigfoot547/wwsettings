@@ -1,4 +1,6 @@
-function setting_get(set)
+wwsettings = {}
+
+function wwsettings.setting_get(set)
 	local file
 	local errstr
 	local filestr
@@ -32,7 +34,7 @@ function setting_get(set)
 	return "<not set>"
 end
 
-function setting_set(set, val)
+function wwsettings.setting_set(set, val)
 	local file
 	local errstr
 	local savetable
@@ -74,11 +76,11 @@ minetest.register_chatcommand("wwset", {
 	func = function(name, param)
 		local setting, value = string.match(param, "([^ ]+) (.+)")
 		if value and setting then
-			setting_set(setting, value)
-			return true, setting .. " = " .. setting_get(setting)
+			wwsettings.setting_set(setting, value)
+			return true, setting .. " = " .. wwsetting.setting_get(setting)
 		end
 		if param then
-			return true, param .. " = " .. setting_get(param)
+			return true, param .. " = " .. wwsettings.setting_get(param)
 		end
 		minetest.chat_send_player(name, minetest.colorize("#FF0000", "Invalid Usage."))
 		return false
